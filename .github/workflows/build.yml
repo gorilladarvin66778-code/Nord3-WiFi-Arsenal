@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Driver Source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: morrownr/8821au-20210708
           path: driver
@@ -23,7 +23,6 @@ jobs:
 
       - name: Patch Driver for USB ID 2357:0120
         run: |
-          # Adding your TP-Link ID specifically to the driver
           sed -i '/{USB_DEVICE(0x2357, 0x011E), .driver_info = RTL8821},/a \	{USB_DEVICE(0x2357, 0x0120), .driver_info = RTL8821},' driver/os_dep/linux/usb_intf.c
 
       - name: Build Module
@@ -31,11 +30,10 @@ jobs:
           cd driver
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
-          # Pointing to the kernel source we downloaded
           make KSRC=../kernel CONFIG_PLATFORM_I386_PC=n CONFIG_PLATFORM_ANDROID_ARM64=y
 
       - name: Upload Driver Module
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: 8821au-driver
           path: driver/8821au.ko
